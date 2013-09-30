@@ -14,12 +14,23 @@ import java.util.Scanner;
  */
 public class HTTP_server {
 
-    private static final int PORT = 8080;
-
+    public static final int SERVER_PORT = 8080;
+    public static final String ROOT_CATALOG = "C:/Users/Daniel/Documents/NetBeansProjects/HTTP assignment/catalog";
+    
+    // not used yet
+    private static void copy(final InputStream input, final OutputStream output) throws IOException {
+        final byte[] buffer = new byte[1024];
+        while(true) {
+            int bytesRead = input.read(buffer);
+            if (bytesRead == -1) { break; }
+            output.write(buffer, 0, bytesRead);
+        }
+    }
+    
     public static void main(String argv[]) throws Exception {
 
         try {
-            ServerSocket serverSock = new ServerSocket(PORT);
+            ServerSocket serverSock = new ServerSocket(SERVER_PORT);
             while (true) {
                 Socket clientSocket = serverSock.accept();
 
@@ -29,7 +40,7 @@ public class HTTP_server {
 
                 // output
                 OutputStream os = clientSocket.getOutputStream();
-                PrintWriter toClient = new PrintWriter(os, true);
+                PrintWriter toClient = new PrintWriter(os, true); //always flush
 
                 // echo text
                 String echoString = "No echo";
