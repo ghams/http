@@ -1,8 +1,11 @@
 package HTTP;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -24,11 +27,12 @@ public class HTTP_server {
                 Socket connectionSocket = serverSock.accept();
                 System.out.println("Connection made.");
 
-                // input
-                InputStream input = connectionSocket.getInputStream();
-                input.read("GET /FILENAME   HTTP/1.1\r\n".getBytes());
-                input.read("\r\n".getBytes());
-
+                BufferedReader fromClient = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
+                String request = fromClient.readLine();
+                String[] parts = request.split(" ");
+                String filename = parts[1];
+                System.out.println(filename);
+                
                 // output
                 OutputStream output = connectionSocket.getOutputStream();
                 output.write("HTTP/1.0 200 OK\r\n".getBytes());
