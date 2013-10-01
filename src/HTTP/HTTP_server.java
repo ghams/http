@@ -44,12 +44,10 @@ public class HTTP_server {
                 output.flush();
                 connectionSocket.close();
 
-                try {
-                    FileInputStream file = new FileInputStream(ROOT_CATALOG);
-                    copy(file, output);
-                    file.close();
-                } catch (IOException ioe) {
-                }
+                FileInputStream file = new FileInputStream(ROOT_CATALOG);
+                copy(file, output);
+                file.close();
+
 
             }
         } catch (IOException ioe) {
