@@ -38,7 +38,6 @@ public class HTTP_service implements Runnable {
                 String filename = parts[1];
                 LOGGER.log(Level.INFO, "Request: " + request);
                 System.out.println(filename);
-                System.out.println(getContentType(filename));
 
                 PrintStream ps = new PrintStream(connectionSocket.getOutputStream());
                 FileInputStream file = new FileInputStream(ROOT_CATALOG + filename);
