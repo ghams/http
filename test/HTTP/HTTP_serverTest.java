@@ -31,7 +31,7 @@ public class HTTP_serverTest {
         final Socket client = new Socket("localhost", HTTP_server.SERVER_PORT);
 
         final OutputStream output = client.getOutputStream();
-        output.write(("GET /file.html HTTP/1.0" + CRLF + CRLF).getBytes());
+        output.write(("GET /hola.html HTTP/1.0" + CRLF + CRLF).getBytes());
         output.flush();
 
         final BufferedReader input = new BufferedReader(new InputStreamReader(client.getInputStream()));

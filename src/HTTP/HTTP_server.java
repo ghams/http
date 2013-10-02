@@ -2,14 +2,17 @@ package HTTP;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import sun.print.PSPrinterJob;
 
 /**
  *
@@ -25,32 +28,35 @@ public class HTTP_server {
 
         try {
             ServerSocket serverSock = new ServerSocket(SERVER_PORT);
+            ExecutorService pool = Executors.newCachedThreadPool();
             while (true) {
                 System.out.println("Waiting for request..");
                 Socket connectionSocket = serverSock.accept();
+//                Runnable service = new
                 System.out.println("Connection made.");
 
                 // split GET /filename
-                BufferedReader fromClient = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
-                String request = fromClient.readLine();
-                String[] parts = request.split(" ");
-                String filename = parts[1];
-                System.out.println(filename);
+                try {
+                    BufferedReader fromClient = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
+                    String request = fromClient.readLine();
+                    String[] parts = request.split(" ");
+                    String filename = parts[1];
+                    System.out.println(filename);
 
-                // output
-//                OutputStream output = connectionSocket.getOutputStream();
-//                output.write(("HTTP/1.0 200 OK" + CRLF).getBytes());
-//                output.write(CRLF.getBytes());
-//                output.write("BODY".getBytes());
-//                output.flush();
-                //connectionSocket.close();
-                PrintStream ps = new PrintStream(connectionSocket.getOutputStream());
-
-                FileInputStream file = new FileInputStream(ROOT_CATALOG + filename);
-                ps.print("HTTP/1.0 200 OK");
-                ps.print(CRLF);
-                copy(file, ps);
-                ps.flush();
+                    PrintStream ps = new PrintStream(connectionSocket.getOutputStream());
+                    FileInputStream file = new FileInputStream(ROOT_CATALOG + filename);
+                    ps.print("HTTP/1.0 200 OK" + CRLF);
+                    ps.print(CRLF);
+                    copy(file, ps);
+                    ps.flush();
+                } catch (FileNotFoundException ex) {
+                    PrintStream ps = new PrintStream(connectionSocket.getOutputStream());
+                    ps.print("HTTP/1.0 404 Not found: /doesNotExist.html" + CRLF);
+                    ps.print(CRLF);
+//                    ps.flush();
+                    System.out.println(ex.getMessage());
+                }
+                connectionSocket.close();
             }
         } catch (IOException ioe) {
             System.err.println("ERROR :" + ioe.toString());
