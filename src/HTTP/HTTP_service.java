@@ -9,6 +9,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -17,6 +19,7 @@ import java.net.Socket;
 public class HTTP_service implements Runnable {
 
     private final Socket connectionSocket;
+    private static final Logger LOGGER = Logger.getLogger("server");
     public static final String ROOT_CATALOG = "C:/assign/";
     public static final String CRLF = "\r\n";
 
@@ -26,12 +29,14 @@ public class HTTP_service implements Runnable {
 
     @Override
     public void run() {
+        LOGGER.log(Level.INFO, "Request from " + connectionSocket);
         try {
             try {
                 BufferedReader fromClient = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
                 String request = fromClient.readLine();
                 String[] parts = request.split(" ");
                 String filename = parts[1];
+                LOGGER.log(Level.INFO, "Request: " + request);
                 System.out.println(filename);
 
                 PrintStream ps = new PrintStream(connectionSocket.getOutputStream());
@@ -46,8 +51,10 @@ public class HTTP_service implements Runnable {
                 ps.print(CRLF);
                 ps.flush();
                 System.out.println(ex.getMessage());
+            } finally {
+                connectionSocket.close();
+                LOGGER.log(Level.WARNING, "Connection close");
             }
-            connectionSocket.close();
         } catch (IOException ioe) {
             System.err.println("ERROR :" + ioe.toString());
         }
