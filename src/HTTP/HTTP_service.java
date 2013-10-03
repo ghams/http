@@ -39,6 +39,7 @@ public class HTTP_service implements Runnable {
                 String filename = parts[1];
                 LOGGER.log(Level.INFO, "Request: " + request);
                 System.out.println(filename);
+//                System.out.println(getContentType(filename));
 
                 // Read file
                 PrintStream ps = new PrintStream(connectionSocket.getOutputStream());
@@ -57,7 +58,7 @@ public class HTTP_service implements Runnable {
                 System.out.println(ex.getMessage());
             } finally {
                 connectionSocket.close();
-                LOGGER.log(Level.WARNING, "Connection close");
+                LOGGER.log(Level.WARNING, "Connection close.");
             }
         } catch (IOException ioe) {
             System.err.println("ERROR :" + ioe.toString());
@@ -76,8 +77,10 @@ public class HTTP_service implements Runnable {
     }
 
     public String getContentType(String filename) throws IOException {
+        BufferedReader fromClient = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
+        filename = fromClient.readLine();
         String[] parts = filename.split(".");
-        String filename2 = parts[2];
-        return filename2;
+        filename = parts[1];
+        return filename;
     }
 }
