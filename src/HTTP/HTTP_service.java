@@ -32,6 +32,7 @@ public class HTTP_service implements Runnable {
         LOGGER.log(Level.INFO, "Request from " + connectionSocket);
         try {
             try {
+                // Request & split /GET
                 BufferedReader fromClient = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
                 String request = fromClient.readLine();
                 String[] parts = request.split(" ");
@@ -39,12 +40,15 @@ public class HTTP_service implements Runnable {
                 LOGGER.log(Level.INFO, "Request: " + request);
                 System.out.println(filename);
 
+                // Read file
                 PrintStream ps = new PrintStream(connectionSocket.getOutputStream());
                 FileInputStream file = new FileInputStream(ROOT_CATALOG + filename);
                 ps.print("HTTP/1.0 200 OK" + CRLF);
                 ps.print(CRLF);
                 copy(file, ps);
                 ps.flush();
+
+                // 404
             } catch (FileNotFoundException ex) {
                 PrintStream ps = new PrintStream(connectionSocket.getOutputStream());
                 ps.print("HTTP/1.0 404 Not found: /doesNotExist.html" + CRLF);
@@ -73,8 +77,7 @@ public class HTTP_service implements Runnable {
 
     public String getContentType(String filename) throws IOException {
         String[] parts = filename.split(".");
-        int last = parts.length;
-        String filename2 = parts[last];
+        String filename2 = parts[2];
         return filename2;
     }
 }
