@@ -22,6 +22,7 @@ public class HTTP_service implements Runnable {
     private static final Logger LOGGER = Logger.getLogger("server");
     public static final String ROOT_CATALOG = "C:/assign/";
     public static final String CRLF = "\r\n";
+//    mapExtensions me = new mapExtensions();
 
     public HTTP_service(Socket connectionSocket) {
         this.connectionSocket = connectionSocket;
@@ -39,7 +40,15 @@ public class HTTP_service implements Runnable {
                 String filename = parts[1];
                 LOGGER.log(Level.INFO, "Request: " + request);
                 System.out.println(filename);
-//                System.out.println(getContentType(filename));
+
+                // get file extension
+                int last = filename.lastIndexOf(".");
+                String ext = null;
+                if (last != -1) {
+                    ext = filename.substring(last + 1, filename.length());
+                }
+                System.out.println(ext);
+//                System.out.println(me.extensions());
 
                 // Read file
                 PrintStream ps = new PrintStream(connectionSocket.getOutputStream());
@@ -74,13 +83,5 @@ public class HTTP_service implements Runnable {
             }
             output.write(buffer, 0, bytesRead);
         }
-    }
-
-    public String getContentType(String filename) throws IOException {
-        BufferedReader fromClient = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
-        filename = fromClient.readLine();
-        String[] parts = filename.split(".");
-        filename = parts[1];
-        return filename;
     }
 }
