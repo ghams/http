@@ -5,7 +5,7 @@ import java.util.Map;
 
 /**
  *
- * @author Daniel
+ * @author Daniel & Katarzyna
  */
 public class mapExtensions {
 
@@ -15,6 +15,10 @@ public class mapExtensions {
         this.map = new HashMap<String, String>();
     }
 
+    /**
+     * HashMap for Content Types
+     * @return
+     */
     public String extensions() {
         map.put("html", "text/html");
         map.put("htm", "text/html");

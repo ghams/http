@@ -22,8 +22,11 @@ public class HTTP_service implements Runnable {
     private static final Logger LOGGER = Logger.getLogger("server");
     public static final String ROOT_CATALOG = "C:/assign/";
     public static final String CRLF = "\r\n";
-//    mapExtensions me = new mapExtensions();
 
+    /**
+     *
+     * @param connectionSocket
+     */
     public HTTP_service(Socket connectionSocket) {
         this.connectionSocket = connectionSocket;
     }
@@ -48,12 +51,12 @@ public class HTTP_service implements Runnable {
                     ext = filename.substring(last + 1, filename.length());
                 }
                 System.out.println(ext);
-//                System.out.println(me.extensions());
 
                 // Read file
                 PrintStream ps = new PrintStream(connectionSocket.getOutputStream());
                 FileInputStream file = new FileInputStream(ROOT_CATALOG + filename);
                 ps.print("HTTP/1.0 200 OK" + CRLF);
+//                ps.print("Content-type: " + getContentType(filename)+ CRLF);
                 ps.print(CRLF);
                 copy(file, ps);
                 ps.flush();
@@ -83,5 +86,28 @@ public class HTTP_service implements Runnable {
             }
             output.write(buffer, 0, bytesRead);
         }
+    }
+    
+    /**
+     *
+     * Does not work as intended.
+     * @param filename
+     * @return
+     */
+    public static String getContentType(String filename) {
+        if (filename.endsWith(".html") || filename.endsWith(".htm"))
+            return "text/html";
+        else if (filename.endsWith(".gif"))
+            return "image/gif";
+        else if (filename.endsWith(".jpg"))
+            return "image/jpeg";
+        else if (filename.endsWith(".pdf"))
+            return "application/pdf";
+        else if (filename.endsWith(".xml"))
+            return "text/xml";
+        else if (filename.endsWith(".doc") || filename.endsWith(".docx"))
+            return "application/msword";
+        else
+            return "text/plain";
     }
 }
